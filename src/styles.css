@@ -227,3 +227,20 @@ body{font-size:16px}.lead,.section-intro p,.page-heading p,.result-copy>p,.about
 @keyframes sparkleFloat{from{opacity:.4;transform:translateY(2%)}to{opacity:1;transform:translateY(-2%)}}
 @keyframes rainDrift{from{background-position:0 0}to{background-position:30px 120px}}
 @media(prefers-reduced-motion:reduce){.result-screen:after{animation:none!important}}
+.agent-search-panel { margin:0 0 30px; padding:20px; border:1px solid rgba(214,168,94,.25); border-radius:18px; background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.025)); box-shadow:0 14px 32px rgba(0,0,0,.12); }
+.agent-search-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:14px; color:#d8a55d; }
+.agent-search-heading .eyebrow { margin:0 0 7px; justify-content:flex-start; font-size:9px; }
+.agent-search-heading h3 { margin:0; color:#f4ead8; font:600 20px/1.25 'Hahmlet','Noto Sans KR',serif; letter-spacing:-.04em; }
+.agent-search-form { display:flex; gap:9px; }
+.agent-search-form input { min-width:0; flex:1; height:50px; padding:0 15px; border:1px solid rgba(255,255,255,.15); border-radius:12px; outline:0; color:#fff6e8; background:rgba(0,0,0,.22); font:14px 'Hahmlet','Noto Sans KR',serif; }
+.agent-search-form input::placeholder { color:#999187; }
+.agent-search-form input:focus { border-color:#d6a85e; box-shadow:0 0 0 3px rgba(214,168,94,.12); }
+.agent-search-form button { display:inline-flex; align-items:center; justify-content:center; gap:7px; flex:none; min-width:104px; border:0; border-radius:12px; color:#1a1209; background:#d6a85e; cursor:pointer; font:600 14px 'Hahmlet','Noto Sans KR',serif; }
+.agent-search-form button:disabled { cursor:not-allowed; opacity:.48; }
+.agent-search-message { margin:12px 2px 0; color:#dcbf91; font:13px/1.6 'Hahmlet','Noto Sans KR',serif; }
+.agent-search-empty .agent-search-message { color:#e6cb9e; }
+.agent-search-error .agent-search-message { color:#f0aaa4; }
+.agent-search-success .agent-search-message { color:#a9d9b7; }
+.spin { animation:agentSpin .9s linear infinite; }
+@keyframes agentSpin { to { transform:rotate(360deg); } }
+@media(max-width:520px) { .agent-search-panel { padding:17px; margin-bottom:24px; } .agent-search-heading h3 { font-size:18px; } .agent-search-form { flex-direction:column; } .agent-search-form button { width:100%; min-height:48px; } }
