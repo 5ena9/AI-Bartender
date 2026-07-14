@@ -3,8 +3,6 @@ import type { Alcohol, Cocktail, Mood, Strength } from '../src/types'
 
 declare const process: { env: Record<string, string | undefined> }
 
-type RequestLike = { method?: string; body?: unknown }
-type ResponseLike = { status: (code: number) => ResponseLike; json: (payload: unknown) => void }
 type AgentRequest = { message: string; mood?: Mood; availableAlcohols?: Alcohol[]; strength?: Strength }
 type SearchInput = Pick<AgentRequest, 'mood' | 'availableAlcohols' | 'strength'> & { query?: string }
 
@@ -75,18 +73,18 @@ export function searchCocktails(input: SearchInput): Cocktail[] {
 }
 
 function cocktailPayload(cocktailsToReturn: Cocktail[]) { return cocktailsToReturn.map(({ id, name, mood, alcohol, level, description, ingredients, steps, time }) => ({ id, name, mood, alcohol, level, description, ingredients, steps, time })) }
-function json(res: ResponseLike, status: number, payload: unknown) { return res.status(status).json(payload) }
+function json(status: number, payload: unknown) { return Response.json(payload, { status, headers: { 'Cache-Control': 'no-store' } }) }
 function fallbackResponse(input: AgentRequest, reason: string) { const queryResults = searchCocktails({ mood: input.mood, availableAlcohols: input.availableAlcohols, strength: input.strength, query: input.message }); const results = (queryResults.length ? queryResults : searchCocktails({ mood: input.mood, availableAlcohols: input.availableAlcohols, strength: input.strength })).slice(0, 3); return { ok: true, fallback: true, usedTool: false, answer: results.length ? `${results[0].name}을 기본 추천으로 안내해드릴게요.` : '조건에 맞는 칵테일을 찾지 못했어요. 술 종류나 도수를 조금 넓혀보세요.', cocktails: cocktailPayload(results), reason } }
 
-export default async function handler(req: RequestLike, res: ResponseLike) {
-  if (req.method !== 'POST') return json(res, 405, { ok: false, error: 'METHOD_NOT_ALLOWED', message: 'POST 요청만 사용할 수 있습니다.' })
+export default { async fetch(request: Request) {
+  if (request.method !== 'POST') return json(405, { ok: false, error: 'METHOD_NOT_ALLOWED', message: 'POST 요청만 사용할 수 있습니다.' })
   let body: unknown
-  try { body = req.body && typeof req.body === 'string' ? JSON.parse(req.body) : req.body } catch { return json(res, 400, { ok: false, error: 'INVALID_JSON', message: '요청 본문이 올바른 JSON이 아닙니다.' }) }
+  try { body = await request.json() } catch { return json(400, { ok: false, error: 'INVALID_JSON', message: '요청 본문이 올바른 JSON이 아닙니다.' }) }
   const bodyRecord = body && typeof body === 'object' ? body as Record<string, unknown> : null
-  if (!bodyRecord || typeof bodyRecord.message !== 'string' || !bodyRecord.message.trim()) return json(res, 400, { ok: false, error: 'INVALID_INPUT', message: 'message가 필요합니다.' })
+  if (!bodyRecord || typeof bodyRecord.message !== 'string' || !bodyRecord.message.trim()) return json(400, { ok: false, error: 'INVALID_INPUT', message: 'message가 필요합니다.' })
   const input = bodyRecord as AgentRequest
-  try { validateSearchInput(input); } catch { return json(res, 400, { ok: false, error: 'INVALID_INPUT', message: 'mood, availableAlcohols, strength 또는 query 형식이 올바르지 않습니다.' }) }
-  if (!process.env.OPENAI_API_KEY) return json(res, 503, { ok: false, error: 'OPENAI_API_KEY_MISSING', message: '서버 환경 변수에 OPENAI_API_KEY를 설정해주세요.' })
+  try { validateSearchInput(input); } catch { return json(400, { ok: false, error: 'INVALID_INPUT', message: 'mood, availableAlcohols, strength 또는 query 형식이 올바르지 않습니다.' }) }
+  if (!process.env.OPENAI_API_KEY) return json(503, { ok: false, error: 'OPENAI_API_KEY_MISSING', message: '서버 환경 변수에 OPENAI_API_KEY를 설정해주세요.' })
 
   const messages: Array<Record<string, unknown>> = [
     { role: 'system', content: 'You are AI Bartender. Always call search_cocktails before recommending. Never invent a cocktail. The final recommendation must use only cocktail ids returned by the tool.' },
@@ -101,9 +99,9 @@ export default async function handler(req: RequestLike, res: ResponseLike) {
     const toolInput = validateSearchInput(JSON.parse(toolCall.function.arguments) as SearchInput)
     const results = searchCocktails(toolInput)
     const safeResults = cocktailPayload(results)
-    return json(res, 200, { ok: true, fallback: false, usedTool: true, answer: safeResults.length ? `${safeResults[0].name}을 추천합니다.` : '조건에 맞는 칵테일을 찾지 못했어요. 술 종류나 도수를 조금 넓혀보세요.', cocktails: safeResults })
+    return json(200, { ok: true, fallback: false, usedTool: true, answer: safeResults.length ? `${safeResults[0].name}을 추천합니다.` : '조건에 맞는 칵테일을 찾지 못했어요. 술 종류나 도수를 조금 넓혀보세요.', cocktails: safeResults })
   } catch (error) {
     const reason = error instanceof Error ? error.message : 'unknown error'
-    return json(res, 200, fallbackResponse(input, `OpenAI 호출 실패: ${reason}`))
+    return json(200, fallbackResponse(input, `OpenAI 호출 실패: ${reason}`))
   }
-}
+} }
