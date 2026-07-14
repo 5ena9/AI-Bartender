@@ -1,6 +1,7 @@
 -- Supabase Dashboard > SQL Editor에서 프로젝트당 한 번 실행하세요.
 -- 익명 로그인 사용자는 auth.uid()가 있는 authenticated 역할로 동작합니다.
 
+alter table public.memos add column if not exists text text;
 alter table public.memos enable row level security;
 
 drop policy if exists "Enable read access for all users" on public.memos;
