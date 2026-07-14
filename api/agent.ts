@@ -1,5 +1,5 @@
-import { cocktails } from '../src/data/cocktails'
-import type { Alcohol, Cocktail, Mood, Strength } from '../src/types'
+import { cocktails } from '../src/data/cocktails.js'
+import type { Alcohol, Cocktail, Mood, Strength } from '../src/types.js'
 
 declare const process: { env: Record<string, string | undefined> }
 
