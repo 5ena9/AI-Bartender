@@ -104,10 +104,11 @@ MUSIC = [
 ]
 
 
-def score_drink(drink, occasion, mood, proof, flavors, budget):
+def score_drink(drink, occasion, drink_type, mood, proof, flavors, budget):
     """사용자 답변과 술의 태그가 얼마나 맞는지 계산합니다."""
     score = 0
     score += 3 if occasion in drink["occasion"] else 0
+    score += 3 if drink_type == "전체" or drink_type == drink["type"] else 0
     score += 3 if mood in drink["mood"] else 0
     score += 2 if proof == drink["proof"] else 0
     score += sum(2 for flavor in flavors if flavor in drink["flavors"])
@@ -115,10 +116,11 @@ def score_drink(drink, occasion, mood, proof, flavors, budget):
     return score
 
 
-def recommend_drinks(occasion, mood, proof, flavors, budget):
+def recommend_drinks(occasion, drink_type, mood, proof, flavors, budget, exclude_names=None):
+    exclude_names = exclude_names or set()
     ranked = sorted(
-        DRINKS,
-        key=lambda drink: score_drink(drink, occasion, mood, proof, flavors, budget),
+        [drink for drink in DRINKS if drink["name"] not in exclude_names],
+        key=lambda drink: score_drink(drink, occasion, drink_type, mood, proof, flavors, budget),
         reverse=True,
     )
     return ranked[:3]
@@ -157,27 +159,30 @@ st.subheader("먼저 오늘의 취향을 알려주세요")
 
 occasion = st.selectbox("1. 누구와 즐기나요?", ["혼술", "친구들과", "가족들과", "연인과", "기타"])
 mood = st.selectbox("2. 어떤 분위기인가요?", ["차분하고 조용한", "기분 좋은", "위로받는"])
-proof = st.select_slider("3. 원하는 도수는 어느 정도인가요?", options=["낮은", "적당", "높은"], value="적당")
+drink_type = st.selectbox("3. 어떤 주종을 경험해보고 싶나요?", ["전체", "와인", "위스키", "샴페인"])
+proof = st.select_slider("4. 원하는 도수는 어느 정도인가요?", options=["낮은", "적당", "높은"], value="적당")
 st.caption("낮은: 가볍게 즐기고 싶은 날 / 적당: 일반적인 주류 도수 / 높은: 향과 알코올감이 뚜렷한 술")
 
 flavors = st.multiselect(
-    "4. 좋아하는 맛과 향을 골라주세요.",
+    "5. 좋아하는 맛과 향을 골라주세요.",
     ["달달한", "탄산감있는", "드라이한", "오크향", "오렌지", "훈연", "꿀"],
     default=["달달한"],
 )
-budget = st.select_slider("5. 오늘의 예산은 어느 정도인가요?", options=["저가", "중간", "고가", "프리미엄"], value="중간")
+budget = st.select_slider("6. 오늘의 예산은 어느 정도인가요?", options=["저가", "중간", "고가", "프리미엄"], value="중간")
 
 if st.button("나에게 맞는 경험 추천받기", type="primary", use_container_width=True):
-    results = recommend_drinks(occasion, mood, proof, flavors, budget)
+    results = recommend_drinks(occasion, drink_type, mood, proof, flavors, budget)
     st.session_state["results"] = results
-    st.session_state["answers"] = (occasion, mood, proof, flavors, budget)
+    st.session_state["answers"] = (occasion, drink_type, mood, proof, flavors, budget)
 
 
 if "results" in st.session_state:
-    occasion, mood, proof, flavors, budget = st.session_state["answers"]
+    occasion, drink_type, mood, proof, flavors, budget = st.session_state["answers"]
     st.divider()
     st.header("오늘의 추천")
     st.write(f"**{mood} 분위기**에 어울리고, {occasion} 즐기기에 좋은 선택을 골랐습니다.")
+    if drink_type != "전체":
+        st.write(f"관심 주종은 **{drink_type}**으로 반영했습니다.")
 
     for index, drink in enumerate(st.session_state["results"]):
         with st.container(border=True):
@@ -197,6 +202,20 @@ if "results" in st.session_state:
             st.markdown("**함께 들을 음악**")
             for song in songs:
                 st.write(f"- **{song['name']}**: {song['reason']}")
+
+    if st.button("다른 주류도 추천받기", use_container_width=True):
+        current_names = {drink["name"] for drink in st.session_state["results"]}
+        alternatives = recommend_drinks(
+            occasion,
+            drink_type,
+            mood,
+            proof,
+            flavors,
+            budget,
+            exclude_names=current_names,
+        )
+        st.session_state["results"] = alternatives
+        st.rerun()
 
 st.divider()
 st.caption("※ 추천은 취향 탐색을 위한 참고용입니다. 과음하지 말고, 음주 후 운전하지 마세요.")
