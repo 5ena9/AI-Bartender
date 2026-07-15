@@ -89,6 +89,7 @@ const alcoholLabels: Record<Alcohol, string> = {
   Soju: "소주",
   Beer: "맥주",
   Wine: "와인",
+  Champagne: "샴페인",
 };
 const strengthLabels: Record<Strength, string> = {
   Light: "가볍게",
