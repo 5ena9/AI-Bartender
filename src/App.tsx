@@ -10,7 +10,7 @@ type MusicMood = { title: string; genre: string; videoId: string; description: s
 const spring = { type: 'spring', stiffness: 360, damping: 25 } as const
 
 const moodLabels: Record<Mood, string> = { Happy: '행복해요', Relaxed: '편안해요', Romantic: '로맨틱해요', Party: '신나요', Stressed: '스트레스 받아요', Tired: '지쳤어요' }
-const alcoholLabels: Record<Alcohol, string> = { Vodka: '보드카', Gin: '진', Rum: '럼', Whiskey: '위스키', Tequila: '테킬라', Brandy: '브랜디', Soju: '소주', Beer: '맥주', Wine: '와인' }
+const alcoholLabels: Record<Alcohol, string> = { Vodka: '보드카', Gin: '진', Rum: '럼', Whiskey: '위스키', Tequila: '테킬라', Brandy: '브랜디', Soju: '소주', Beer: '맥주', Wine: '와인', Champagne: '샴페인' }
 const strengthLabels: Record<Strength, string> = { Light: '가볍게', Medium: '적당히', Strong: '진하게' }
 const cocktailNames = ['시트러스 블룸','벨벳 아워','로즈 애프터글로우','미드나잇 팔로마','클라우드 나인','가든 김렛','선셋 스프리츠','스파이스드 오차드','코스탈 뮬','콰이어트 스톰','허니 피즈','브램블 누아','골든 사워','아가베 하이볼','베리 브랜디 스매시','코코넛 문','루비 네그로니','레몬 샨디','스모크드 메이플','페어 블라썸']
 const cocktailDescriptions = ['기분을 산뜻하게 끌어올리는 밝고 톡 쏘는 한 잔이에요.','은은한 스파이스와 따뜻한 여운이 남는 부드러운 나이트캡이에요.','플로럴한 향과 장미빛 분위기가 조용히 설레게 해요.','스모키한 깊이와 탄산감으로 파티를 시작하기 좋아요.','느린 저녁에 잘 어울리는 포근하고 크리미한 한 잔이에요.','오이와 라임의 산뜻함으로 마음을 차분하게 정리해줘요.','황금빛 노을처럼 가볍고 기분 좋은 스프리츠예요.','따뜻한 사과와 스파이스가 천천히 빛나는 위스키 칵테일이에요.','진저의 알싸함과 라임, 탄산이 시원하게 어우러져요.','어둡고 부드러운 풍미가 깊은 숨을 고르게 해줘요.','은은하게 달콤하고 청량해서 부담 없이 즐기기 좋아요.','베리의 진한 색감과 산미가 우아하면서도 장난스러워요.','상큼한 시트러스와 실키한 위스키의 균형이 좋아요.','깨끗한 아가베와 자몽이 바람처럼 가볍게 지나가요.','상큼한 베리와 민트가 빠르게 기분을 바꿔줘요.','코코넛과 바닐라가 작은 휴가처럼 부드럽게 감싸줘요.','쌉쌀하고 달콤한 루비빛 한 잔으로 마음을 리셋해요.','맑고 상쾌해서 거의 손이 가지 않는 여름날의 한 잔이에요.','촛불 아래 천천히 마시기 좋은 스모키한 위스키예요.','배와 플로럴 노트가 부드럽게 내려앉는 편안한 한 잔이에요.']
