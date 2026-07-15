@@ -1,4 +1,4 @@
-import type { Cocktail } from '../types'
+import type { Cocktail } from '../types.js'
 
 const base = [
   ['Citrus Bloom','Happy','Vodka','Medium','Bright, bubbly, and made for a little lift.','2 oz vodka|1 oz lemon juice|0.5 oz honey syrup|Soda water','Shake vodka, lemon, and honey with ice.|Strain over fresh ice.|Top with soda and garnish with lemon.','5 min','Tropical Vibes','','linear-gradient(145deg,#f9b233,#e76547)'],
