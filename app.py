@@ -1,3 +1,6 @@
+import random
+from urllib.parse import quote_plus
+
 import streamlit as st
 
 
@@ -79,27 +82,136 @@ DRINKS = [
         "story": "체리와 붉은 과일을 떠올리게 하는 향과 부드러운 질감이 있어 와인의 향을 처음 알아가기 좋습니다.",
         "serving": "너무 차갑지 않게 준비하고, 잔을 살짝 흔들어 과일 향을 먼저 느껴보세요.",
     },
+    {
+        "name": "뵈브 클리코 옐로 레이블",
+        "type": "샴페인",
+        "price": "고가",
+        "proof": "적당",
+        "flavors": ["탄산감있는", "드라이한", "오렌지"],
+        "mood": ["기분 좋은", "차분하고 조용한"],
+        "occasion": ["친구들과", "연인과", "가족들과"],
+        "level": "입문 추천",
+        "story": "상쾌한 탄산과 사과·감귤 계열의 향이 또렷해 샴페인의 기본적인 매력을 알아가기 좋습니다.",
+        "serving": "충분히 차갑게 준비하고, 작은 모금으로 탄산과 산미의 균형을 느껴보세요.",
+    },
+    {
+        "name": "볼랭저 스페셜 쿠베",
+        "type": "샴페인",
+        "price": "프리미엄",
+        "proof": "적당",
+        "flavors": ["드라이한", "탄산감있는", "오크향"],
+        "mood": ["차분하고 조용한", "기분 좋은"],
+        "occasion": ["연인과", "친구들과"],
+        "level": "프리미엄 경험",
+        "story": "잘 익은 과일과 구운 빵을 떠올리게 하는 향이 있어 축하하는 날의 샴페인을 한 단계 깊게 경험하기 좋습니다.",
+        "serving": "차갑게 마시되 잔을 비우기 전에 향이 어떻게 변하는지 천천히 비교해보세요.",
+    },
+    {
+        "name": "발베니 12년 더블우드",
+        "type": "위스키",
+        "price": "고가",
+        "proof": "적당",
+        "flavors": ["달달한", "오크향", "꿀"],
+        "mood": ["차분하고 조용한", "위로받는"],
+        "occasion": ["혼술", "연인과"],
+        "level": "입문 추천",
+        "story": "꿀과 바닐라처럼 부드러운 향이 있어 위스키의 오크 향을 부담 없이 처음 경험하기 좋습니다.",
+        "serving": "처음에는 그대로 향을 맡고, 이후 물을 몇 방울 넣어 달콤한 향의 변화를 느껴보세요.",
+    },
+    {
+        "name": "조니워커 블랙 라벨",
+        "type": "위스키",
+        "price": "중간",
+        "proof": "높은",
+        "flavors": ["훈연", "오크향", "드라이한"],
+        "mood": ["차분하고 조용한", "기분 좋은"],
+        "occasion": ["혼술", "친구들과"],
+        "level": "입문 추천",
+        "story": "과일의 달콤함과 은은한 훈연 향이 함께 있어 여러 위스키 원액이 만드는 균형을 알아가기 좋습니다.",
+        "serving": "얼음 하나 또는 물을 조금 넣어 향의 강도를 조절하며 천천히 마셔보세요.",
+    },
+    {
+        "name": "클라우디 베이 소비뇽 블랑",
+        "type": "와인",
+        "price": "고가",
+        "proof": "적당",
+        "flavors": ["드라이한", "오렌지"],
+        "mood": ["기분 좋은", "차분하고 조용한"],
+        "occasion": ["연인과", "가족들과", "친구들과"],
+        "level": "입문 추천",
+        "story": "상큼한 감귤과 허브를 떠올리게 하는 향이 분명해 화이트와인의 산뜻한 매력을 배우기 좋습니다.",
+        "serving": "차갑게 준비하고, 잔을 가볍게 흔든 뒤 감귤과 허브 향을 먼저 느껴보세요.",
+    },
+    {
+        "name": "카시예로 델 디아블로 카베르네 소비뇽",
+        "type": "와인",
+        "price": "중간",
+        "proof": "적당",
+        "flavors": ["드라이한", "오크향", "달달한"],
+        "mood": ["차분하고 조용한", "위로받는"],
+        "occasion": ["혼술", "가족들과", "친구들과"],
+        "level": "입문 추천",
+        "story": "검은 과일과 은은한 오크 향이 느껴지는 대중적인 레드와인으로, 드라이한 와인을 처음 경험하기 좋습니다.",
+        "serving": "마시기 전 잔에 잠시 따라 두고, 과일 향과 살짝 떫은 느낌을 천천히 비교해보세요.",
+    },
 ]
 
 
 PAIRINGS = [
-    {"name": "캐비어와 블리니", "price": "프리미엄", "types": ["샴페인"], "reason": "짭짤한 캐비어와 바삭한 블리니가 샴페인의 산미와 탄산감을 돋보이게 합니다."},
-    {"name": "굴과 레몬", "price": "프리미엄", "types": ["샴페인"], "reason": "굴의 바다 향과 짠맛을 샴페인의 산뜻한 산미가 깔끔하게 정리합니다."},
-    {"name": "푸아그라와 브리오슈", "price": "프리미엄", "types": ["위스키", "와인"], "reason": "푸아그라의 진하고 부드러운 질감이 위스키의 오크 향과 와인의 과일 향을 풍성하게 느끼게 합니다."},
-    {"name": "숙성 치즈", "price": "일상 접근 가능", "types": ["위스키", "와인", "샴페인"], "reason": "치즈의 짠맛과 크리미한 질감이 술의 향을 부드럽게 연결해 줍니다."},
-    {"name": "다크초콜릿", "price": "일상 접근 가능", "types": ["위스키", "와인"], "reason": "초콜릿의 쌉쌀하고 달콤한 맛이 오크 향과 바닐라 향을 자연스럽게 강조합니다."},
-    {"name": "말린 무화과와 견과류", "price": "일상 접근 가능", "types": ["위스키", "와인"], "reason": "말린 과일과 견과류의 고소한 향이 위스키의 꿀·오크 향과 잘 어울립니다."},
-    {"name": "훈제 연어와 크림치즈", "price": "일상 접근 가능", "types": ["샴페인", "와인"], "reason": "훈제 향과 크림치즈의 부드러움을 산뜻한 술이 균형 있게 받쳐줍니다."},
+    {"name": "캐비어와 블리니", "price": "프리미엄", "types": ["샴페인"], "flavors": ["탄산감있는", "드라이한"], "reason": "짭짤한 캐비어와 바삭한 블리니가 샴페인의 산미와 탄산감을 돋보이게 합니다."},
+    {"name": "굴과 레몬", "price": "프리미엄", "types": ["샴페인"], "flavors": ["탄산감있는", "드라이한", "오렌지"], "reason": "굴의 바다 향과 짠맛을 샴페인의 산뜻한 산미가 깔끔하게 정리합니다."},
+    {"name": "푸아그라와 브리오슈", "price": "프리미엄", "types": ["위스키", "와인"], "flavors": ["오크향", "달달한", "드라이한"], "reason": "푸아그라의 진하고 부드러운 질감이 위스키의 오크 향과 와인의 과일 향을 풍성하게 느끼게 합니다."},
+    {"name": "트러플 감자칩", "price": "프리미엄", "types": ["샴페인", "와인"], "flavors": ["탄산감있는", "오크향", "드라이한"], "reason": "트러플의 깊은 향과 감자의 짠맛이 샴페인의 탄산감과 와인의 구조감을 살려줍니다."},
+    {"name": "가리비 카르파초", "price": "프리미엄", "types": ["샴페인", "와인"], "flavors": ["탄산감있는", "드라이한", "오렌지"], "reason": "가리비의 은은한 단맛과 레몬 향이 산뜻한 샴페인과 화이트와인에 잘 연결됩니다."},
+    {"name": "숙성 치즈", "price": "일상 접근 가능", "types": ["위스키", "와인", "샴페인"], "flavors": ["오크향", "드라이한", "달달한"], "reason": "치즈의 짠맛과 크리미한 질감이 술의 향을 부드럽게 연결해 줍니다."},
+    {"name": "다크초콜릿", "price": "일상 접근 가능", "types": ["위스키", "와인"], "flavors": ["달달한", "오크향", "훈연"], "reason": "초콜릿의 쌉쌀하고 달콤한 맛이 오크 향과 바닐라 향을 자연스럽게 강조합니다."},
+    {"name": "말린 무화과와 견과류", "price": "일상 접근 가능", "types": ["위스키", "와인"], "flavors": ["달달한", "꿀", "오크향"], "reason": "말린 과일과 견과류의 고소한 향이 위스키의 꿀·오크 향과 잘 어울립니다."},
+    {"name": "훈제 연어와 크림치즈", "price": "일상 접근 가능", "types": ["샴페인", "와인"], "flavors": ["탄산감있는", "드라이한", "훈연"], "reason": "훈제 향과 크림치즈의 부드러움을 산뜻한 술이 균형 있게 받쳐줍니다."},
+    {"name": "블루치즈와 꿀", "price": "일상 접근 가능", "types": ["위스키", "와인"], "flavors": ["달달한", "꿀", "오크향"], "reason": "블루치즈의 강한 풍미와 꿀의 단맛이 달콤한 위스키와 묵직한 와인을 부드럽게 만듭니다."},
+    {"name": "애플 타르트", "price": "일상 접근 가능", "types": ["위스키", "와인"], "flavors": ["달달한", "꿀", "오크향"], "reason": "사과와 시나몬의 따뜻한 향이 과일 향과 꿀 향이 있는 위스키에 자연스럽게 이어집니다."},
+    {"name": "브리치즈와 포도", "price": "일상 접근 가능", "types": ["샴페인", "와인"], "flavors": ["탄산감있는", "드라이한", "달달한"], "reason": "부드러운 치즈와 포도의 은은한 단맛이 산뜻한 샴페인과 와인의 균형을 잡아줍니다."},
+    {"name": "올리브와 아몬드", "price": "일상 접근 가능", "types": ["샴페인", "와인"], "flavors": ["드라이한", "오렌지"], "reason": "올리브의 짠맛과 아몬드의 고소함이 드라이한 술의 풍미를 또렷하게 해줍니다."},
+    {"name": "버섯 크림 브루스케타", "price": "일상 접근 가능", "types": ["위스키", "와인"], "flavors": ["오크향", "훈연", "드라이한"], "reason": "버섯의 흙내음과 크림의 질감이 오크 향이나 은은한 훈연 향과 잘 어울립니다."},
 ]
 
 
 MUSIC = [
-    {"name": "Norah Jones - Don't Know Why", "mood": ["차분하고 조용한", "위로받는"], "reason": "부드러운 보컬과 피아노가 위스키의 느린 향 감상과 잘 어울립니다."},
-    {"name": "Cigarettes After Sex - Apocalypse", "mood": ["차분하고 조용한", "연인과"], "reason": "몽환적이고 느린 사운드가 샴페인이나 와인을 마시는 조용한 밤의 분위기를 만들어줍니다."},
-    {"name": "Laufey - From The Start", "mood": ["기분 좋은", "연인과"], "reason": "재즈를 바탕으로 한 세련된 팝이 가벼운 샴페인과 즐거운 대화에 잘 맞습니다."},
-    {"name": "HYUKOH - Comes And Goes", "mood": ["위로받는", "차분하고 조용한"], "reason": "담백하고 쓸쓸한 분위기가 하루를 정리하는 혼술 시간에 잘 어울립니다."},
-    {"name": "Men I Trust - Show Me How", "mood": ["차분하고 조용한", "위로받는"], "reason": "부드러운 인디 사운드가 강한 자극 없이 술과 음식의 향에 집중하게 합니다."},
-    {"name": "The Marías - No One Noticed", "mood": ["기분 좋은", "연인과"], "reason": "세련된 드림팝의 리듬이 와인이나 샴페인의 가벼운 분위기를 살려줍니다."},
+    {"name": "Norah Jones - Don't Know Why", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "와인"], "flavors": ["달달한", "오크향"], "reason": "부드러운 보컬과 피아노가 달콤한 위스키나 와인의 향을 천천히 감상하게 합니다."},
+    {"name": "Cigarettes After Sex - Apocalypse", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "연인과"], "drink_types": ["샴페인", "와인"], "flavors": ["드라이한", "오렌지"], "reason": "몽환적인 사운드가 드라이한 샴페인과 와인을 마시는 늦은 밤의 분위기를 만듭니다."},
+    {"name": "Laufey - From The Start", "mood": ["기분 좋은", "연인과"], "occasion": ["연인과", "친구들과"], "drink_types": ["샴페인", "와인"], "flavors": ["탄산감있는", "달달한"], "reason": "재즈를 바탕으로 한 산뜻한 팝이 가벼운 샴페인과 즐거운 대화에 잘 맞습니다."},
+    {"name": "HYUKOH - Comes And Goes", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술"], "drink_types": ["위스키", "와인"], "flavors": ["드라이한", "오크향"], "reason": "담백하고 쓸쓸한 분위기가 하루를 정리하는 혼술 시간과 잘 어울립니다."},
+    {"name": "Men I Trust - Show Me How", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "와인"], "flavors": ["달달한", "꿀"], "reason": "부드러운 드림팝 사운드가 꿀과 바닐라처럼 달콤한 향에 집중하게 합니다."},
+    {"name": "The Marías - No One Noticed", "mood": ["기분 좋은", "연인과"], "occasion": ["연인과", "친구들과"], "drink_types": ["와인", "샴페인"], "flavors": ["탄산감있는", "오렌지"], "reason": "세련된 드림팝 리듬이 와인이나 샴페인의 가벼운 분위기를 살려줍니다."},
+    {"name": "Khruangbin - Friday Morning", "mood": ["기분 좋은", "차분하고 조용한"], "occasion": ["친구들과", "혼술"], "drink_types": ["와인", "샴페인"], "flavors": ["오렌지", "드라이한"], "reason": "여유로운 기타 연주가 산뜻한 와인과 기분 좋은 저녁의 흐름을 만들어줍니다."},
+    {"name": "Sufjan Stevens - Mystery of Love", "mood": ["위로받는", "연인과"], "occasion": ["연인과", "혼술"], "drink_types": ["와인", "샴페인"], "flavors": ["드라이한", "오렌지"], "reason": "섬세한 어쿠스틱 사운드가 조용한 와인과 로맨틱한 순간을 부드럽게 연결합니다."},
+    {"name": "Beach House - Space Song", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "와인"], "flavors": ["오크향", "훈연"], "reason": "깊고 몽환적인 사운드가 오크와 훈연 향이 있는 술의 긴 여운과 잘 맞습니다."},
+    {"name": "Bon Iver - Holocene", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술"], "drink_types": ["위스키", "와인"], "flavors": ["드라이한", "오크향"], "reason": "넓고 잔잔한 사운드가 하루를 천천히 내려놓는 시간에 어울립니다."},
+    {"name": "Phoebe Bridgers - Garden Song", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "와인"], "flavors": ["달달한", "드라이한"], "reason": "담담한 인디 포크가 부드러운 위스키나 레드와인의 차분한 분위기를 살립니다."},
+    {"name": "Radiohead - Weird Fishes/Arpeggi", "mood": ["차분하고 조용한"], "occasion": ["혼술", "친구들과"], "drink_types": ["위스키"], "flavors": ["훈연", "오크향"], "reason": "층층이 쌓이는 기타 사운드가 개성 강한 훈연 위스키를 천천히 감상하게 합니다."},
+    {"name": "The National - I Need My Girl", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "와인"], "flavors": ["오크향", "드라이한"], "reason": "낮고 깊은 보컬이 묵직한 위스키와 조용히 대화하는 밤에 잘 어울립니다."},
+    {"name": "Mitski - My Love Mine All Mine", "mood": ["위로받는", "연인과"], "occasion": ["연인과", "혼술"], "drink_types": ["와인", "샴페인"], "flavors": ["달달한", "드라이한"], "reason": "따뜻한 보컬이 과일 향이 있는 와인과 감정적인 밤의 분위기를 채워줍니다."},
+    {"name": "FKJ - Ylang Ylang", "mood": ["기분 좋은", "차분하고 조용한"], "occasion": ["친구들과", "연인과"], "drink_types": ["샴페인", "와인"], "flavors": ["탄산감있는", "오렌지"], "reason": "부드러운 전자음과 재즈 리듬이 샴페인의 탄산감을 가볍고 세련되게 살립니다."},
+    {"name": "Mac DeMarco - Chamber of Reflection", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술"], "drink_types": ["위스키"], "flavors": ["오크향", "꿀"], "reason": "느긋하고 빈티지한 사운드가 꿀과 오크 향이 있는 위스키의 여운과 어울립니다."},
+    {"name": "Tame Impala - Borderline", "mood": ["기분 좋은", "차분하고 조용한"], "occasion": ["친구들과", "연인과"], "drink_types": ["샴페인", "와인"], "flavors": ["탄산감있는", "달달한"], "reason": "몽환적인 그루브가 샴페인과 가벼운 와인을 즐기는 기분 좋은 순간을 돋보이게 합니다."},
+    {"name": "우효 - 민들레", "mood": ["위로받는", "기분 좋은"], "occasion": ["혼술", "연인과"], "drink_types": ["와인", "샴페인"], "flavors": ["달달한", "오렌지"], "reason": "맑고 따뜻한 인디 팝이 과일 향이 있는 와인과 편안한 저녁에 잘 어울립니다."},
+    {"name": "Alice Phoebe Lou - Something Holy", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술", "연인과"], "drink_types": ["와인", "위스키"], "flavors": ["드라이한", "오크향"], "reason": "따뜻한 보컬과 느슨한 리듬이 드라이한 와인과 위스키의 긴 여운을 편안하게 받쳐줍니다."},
+    {"name": "Japanese Breakfast - Be Sweet", "mood": ["기분 좋은"], "occasion": ["친구들과", "연인과"], "drink_types": ["샴페인", "와인"], "flavors": ["탄산감있는", "달달한"], "reason": "밝은 인디 팝의 에너지가 샴페인의 탄산감과 축하하는 분위기를 살려줍니다."},
+    {"name": "Big Thief - Simulation Swarm", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술"], "drink_types": ["위스키", "와인"], "flavors": ["드라이한", "오크향"], "reason": "섬세하게 쌓이는 포크 사운드가 차분한 혼술과 깊은 향의 술에 어울립니다."},
+    {"name": "Daughter - Youth", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "와인"], "flavors": ["훈연", "드라이한"], "reason": "잔잔하지만 깊은 기타와 보컬이 스모키한 위스키의 여운을 길게 이어줍니다."},
+    {"name": "The xx - Intro", "mood": ["차분하고 조용한"], "occasion": ["혼술", "연인과"], "drink_types": ["위스키", "샴페인"], "flavors": ["오크향", "탄산감있는"], "reason": "미니멀한 리듬이 술의 향과 잔 부딪히는 소리에 집중하게 합니다."},
+    {"name": "L'Impératrice - Vanille fraise", "mood": ["기분 좋은", "연인과"], "occasion": ["연인과", "친구들과"], "drink_types": ["샴페인", "와인"], "flavors": ["달달한", "탄산감있는"], "reason": "프렌치 디스코의 세련된 리듬이 달콤한 향의 샴페인과 가벼운 와인에 잘 맞습니다."},
+    {"name": "Men I Trust - Lauren", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "연인과"], "drink_types": ["와인", "위스키"], "flavors": ["달달한", "꿀"], "reason": "느긋한 기타와 보컬이 꿀과 과일 향이 있는 술의 부드러움을 살려줍니다."},
+    {"name": "Tom Misch - Movie", "mood": ["기분 좋은", "연인과"], "occasion": ["연인과", "친구들과"], "drink_types": ["샴페인", "와인"], "flavors": ["오렌지", "탄산감있는"], "reason": "재즈와 소울이 섞인 리듬이 산뜻한 술과 즐거운 대화 사이를 채워줍니다."},
+    {"name": "Arlo Parks - Eugene", "mood": ["위로받는", "차분하고 조용한"], "occasion": ["혼술", "연인과"], "drink_types": ["와인", "샴페인"], "flavors": ["드라이한", "오렌지"], "reason": "담백한 인디 소울이 과일 향 와인을 마시며 감정을 정리하는 시간에 잘 어울립니다."},
+    {"name": "Soccer Mommy - circle the drain", "mood": ["위로받는"], "occasion": ["혼술"], "drink_types": ["위스키", "와인"], "flavors": ["드라이한", "오크향"], "reason": "차분한 기타 사운드가 하루의 피로를 내려놓는 혼술 시간과 잘 맞습니다."},
+    {"name": "Clairo - Bags", "mood": ["차분하고 조용한", "연인과"], "occasion": ["연인과", "혼술"], "drink_types": ["와인", "샴페인"], "flavors": ["달달한", "드라이한"], "reason": "섬세하고 가까운 보컬이 부드러운 와인과 조용한 대화의 분위기를 만듭니다."},
+    {"name": "Snail Mail - Pristine", "mood": ["기분 좋은", "위로받는"], "occasion": ["친구들과", "혼술"], "drink_types": ["와인", "샴페인"], "flavors": ["오렌지", "드라이한"], "reason": "맑은 기타와 청춘의 에너지가 산뜻한 와인과 가벼운 모임에 어울립니다."},
+    {"name": "The Japanese House - Saw You In A Dream", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "연인과"], "drink_types": ["샴페인", "와인"], "flavors": ["탄산감있는", "오렌지"], "reason": "몽환적인 전자음이 샴페인의 섬세한 탄산과 감귤 향을 부드럽게 확장합니다."},
+    {"name": "윤지영 - 우우우린", "mood": ["위로받는", "연인과"], "occasion": ["연인과", "혼술"], "drink_types": ["와인", "위스키"], "flavors": ["달달한", "드라이한"], "reason": "담담한 한국 인디 음악이 과일 향 와인이나 부드러운 위스키와 조용히 어울립니다."},
+    {"name": "새소년 - 긴 꿈", "mood": ["차분하고 조용한", "위로받는"], "occasion": ["혼술", "친구들과"], "drink_types": ["위스키", "와인"], "flavors": ["훈연", "오크향"], "reason": "개성 있는 기타와 보컬이 훈연 위스키의 강한 향을 감상하는 시간을 만들어줍니다."},
+    {"name": "검정치마 - Everything", "mood": ["연인과", "위로받는"], "occasion": ["연인과", "혼술"], "drink_types": ["와인", "샴페인"], "flavors": ["달달한", "오렌지"], "reason": "로맨틱한 인디 록이 달콤한 향의 와인과 연인과의 느린 저녁에 잘 맞습니다."},
+    {"name": "실리카겔 - Tik Tak Tok", "mood": ["기분 좋은"], "occasion": ["친구들과", "연인과"], "drink_types": ["샴페인", "위스키"], "flavors": ["탄산감있는", "훈연"], "reason": "실험적인 리듬이 톡 쏘는 샴페인이나 개성 강한 위스키와 재미있는 대비를 만듭니다."},
+    {"name": "페퍼톤스 - 공원여행", "mood": ["기분 좋은"], "occasion": ["친구들과", "가족들과"], "drink_types": ["와인", "샴페인"], "flavors": ["탄산감있는", "오렌지"], "reason": "밝고 산뜻한 밴드 사운드가 가벼운 와인과 샴페인을 즐기는 낮의 분위기를 살립니다."},
 ]
 
 
@@ -117,32 +229,74 @@ def score_drink(drink, occasion, drink_type, mood, proof, flavors, budget):
 
 def recommend_drinks(occasion, drink_type, mood, proof, flavors, budget, exclude_names=None):
     exclude_names = exclude_names or set()
+    available_drinks = [drink for drink in DRINKS if drink["name"] not in exclude_names]
     ranked = sorted(
-        [drink for drink in DRINKS if drink["name"] not in exclude_names],
+        available_drinks,
         key=lambda drink: score_drink(drink, occasion, drink_type, mood, proof, flavors, budget),
         reverse=True,
     )
-    return ranked[:3]
+    # 조건에 맞는 후보가 없어도 빈 화면 대신 최소 한 개를 보여줍니다.
+    return ranked[:3] or available_drinks[:1] or DRINKS[:1]
 
 
 def recommend_pairings(drink, budget):
-    # 프리미엄 술에는 특별한 페어링을 우선 보여주고,
-    # 그 외에는 집에서 쉽게 구할 수 있는 페어링을 우선 보여줍니다.
-    if budget == "프리미엄":
-        preferred = [p for p in PAIRINGS if p["price"] == "프리미엄" and drink["type"] in p["types"]]
-        if preferred:
-            return preferred[:2]
-    accessible = [p for p in PAIRINGS if p["price"] == "일상 접근 가능" and drink["type"] in p["types"]]
-    return accessible[:3]
+    """주종·예산·술의 맛과 향을 함께 반영해 페어링을 추천합니다."""
+    candidates = [p for p in PAIRINGS if drink["type"] in p["types"]]
+    shuffled = candidates.copy()
+    random.shuffle(shuffled)
+
+    def pairing_score(pairing):
+        price_score = 3 if budget == "프리미엄" and pairing["price"] == "프리미엄" else 0
+        flavor_score = sum(2 for flavor in drink["flavors"] if flavor in pairing.get("flavors", []))
+        return price_score + flavor_score
+
+    ranked = sorted(shuffled, key=pairing_score, reverse=True)
+    return ranked[:3] or PAIRINGS[:3]
 
 
-def recommend_music(mood, occasion):
-    ranked = sorted(
-        MUSIC,
-        key=lambda song: (2 if mood in song["mood"] else 0) + (1 if occasion in song["mood"] else 0),
-        reverse=True,
+def recommend_music(drink, mood, occasion):
+    """분위기·상황·주종·맛을 반영하고, 이전 곡과 겹치지 않게 추천합니다."""
+    music_cache = st.session_state.setdefault("music_cache", {})
+    request_key = "|".join(
+        [
+            drink["name"],
+            drink["type"],
+            mood,
+            occasion,
+            ",".join(sorted(drink.get("flavors", []))),
+        ]
     )
-    return ranked[:3]
+    if request_key in music_cache:
+        return music_cache[request_key]
+
+    shuffled = MUSIC.copy()
+    random.shuffle(shuffled)
+
+    def music_score(song):
+        return (
+            (3 if mood in song["mood"] else 0)
+            + (2 if drink["type"] in song["drink_types"] else 0)
+            + (1 if occasion in song["occasion"] else 0)
+            + sum(1 for flavor in drink["flavors"] if flavor in song["flavors"])
+        )
+
+    ranked = sorted(shuffled, key=music_score, reverse=True)
+    history = set(st.session_state.get("music_history", []))
+    fresh = [song for song in ranked if song["name"] not in history]
+
+    # 현재 세션에서 거의 모든 곡을 사용했다면 기록을 한 번 비우고 다시 순환합니다.
+    if len(fresh) < 3:
+        history = set()
+        fresh = ranked
+
+    selected = fresh[:3] or MUSIC[:3]
+    st.session_state["music_history"] = list(history | {song["name"] for song in selected})
+    music_cache[request_key] = selected
+    return selected
+
+def youtube_search_url(song_name):
+    """특정 영상이 삭제되어도 작동하도록 YouTube 검색 결과로 연결합니다."""
+    return f"https://www.youtube.com/results?search_query={quote_plus(song_name)}"
 
 
 # -----------------------------
@@ -191,7 +345,7 @@ if "results" in st.session_state:
             st.write(f"**처음 마시는 방법**: {drink['serving']}")
 
             pairings = recommend_pairings(drink, budget)
-            songs = recommend_music(mood, occasion)
+            songs = recommend_music(drink, mood, occasion)
 
             # 술과 페어링을 연결해 표시하는 핵심 코드입니다.
             st.markdown("**함께 먹기 좋은 페어링**")
@@ -200,7 +354,8 @@ if "results" in st.session_state:
 
             st.markdown("**함께 들을 음악**")
             for song in songs:
-                st.write(f"- **{song['name']}**: {song['reason']}")
+                youtube_url = youtube_search_url(song["name"])
+                st.markdown(f"- **[{song['name']}]({youtube_url})**: {song['reason']}")
 
     if st.button("다른 주류도 추천받기", use_container_width=True):
         current_names = {drink["name"] for drink in st.session_state["results"]}
