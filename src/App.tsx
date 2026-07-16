@@ -1931,6 +1931,7 @@ export default function App() {
     moodLabel: "따뜻하고 여유로운",
     moodDescription: moodRituals["golden-hour"],
   });
+  const [hasPrompt, setHasPrompt] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -1997,6 +1998,12 @@ export default function App() {
     setMood(profile.legacyMood);
     setAvailable(nextAvailable);
     setStrength(nextStrength);
+    if (!hasPrompt) {
+      setPromptCopy({
+        moodLabel: profile.description,
+        moodDescription: moodRituals[nextTheme],
+      });
+    }
     setResult(pool[Math.floor(Math.random() * pool.length)]);
     setScreen("loading");
   };
@@ -2050,8 +2057,9 @@ export default function App() {
         (theme) =>
           theme.legacyMood === (selection?.mood || candidate.mood) &&
           theme.preferredAlcohol.includes(candidate.alcohol),
-      ) || moodThemes[0];
+    ) || moodThemes[0];
     await updatePromptCopy(message, nextTheme.id);
+    setHasPrompt(true);
     setThemeId(nextTheme.id);
     setMood(nextTheme.legacyMood);
     setAvailable(selectedAlcohols);
