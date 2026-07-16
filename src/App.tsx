@@ -123,24 +123,48 @@ const getSubjectParticle = (word: string) => {
   if (code < 0xac00 || code > 0xd7a3) return "라는";
   return (code - 0xac00) % 28 === 0 ? "라는" : "이라는";
 };
-const fallbackPromptCopy = (message: string): PromptCopy => {
+const fallbackPromptCopy = (message: string, themeId: MoodTheme = "soft-mood"): PromptCopy => {
   const normalized = message.toLowerCase();
-  if (/썸|데이트|소개팅|설레|로맨틱|연인/.test(normalized)) {
+  if (/썸|데이트|소개팅|설레|로맨틱|연인|달달|달콤/.test(normalized) || themeId === "flirt" || themeId === "sweet-crush") {
     return {
       moodLabel: "달콤하고 설레는",
       moodDescription: "달콤하고 설레는 시간에 어울리는 한 잔을 찾아봤어요.",
     };
   }
-  if (/친구|파티|신나|축하|모임/.test(normalized)) {
+  if (/친구|파티|신나|축하|생일|기념|모임|건배/.test(normalized) || themeId === "celebration" || themeId === "bold") {
     return {
       moodLabel: "활기차고 신나는",
       moodDescription: "함께 웃고 즐기기 좋은 한 잔을 찾아봤어요.",
     };
   }
-  if (/비|차분|조용|쉬|피곤|지쳐|퇴근/.test(normalized)) {
+  if (/비|차분|조용|쉬|피곤|지쳐|퇴근|위로|우울|센치/.test(normalized) || themeId === "rainy-day" || themeId === "chill") {
     return {
       moodLabel: "차분하고 편안한",
       moodDescription: "느린 저녁에 마음을 내려놓기 좋은 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/여행|휴가|바다|해변|이국|새로운 곳/.test(normalized) || themeId === "escape") {
+    return {
+      moodLabel: "가볍고 자유로운",
+      moodDescription: "잠시 일상을 벗어나 여행하듯 즐기기 좋은 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/노을|해질녘|저녁|여유|따뜻|햇살/.test(normalized) || themeId === "golden-hour") {
+    return {
+      moodLabel: "따뜻하고 여유로운",
+      moodDescription: "노을처럼 천천히 물드는 시간에 어울리는 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/밤|어두|진한|깊은|고요/.test(normalized) || themeId === "after-dark") {
+    return {
+      moodLabel: "깊고 고요한",
+      moodDescription: "깊은 밤의 여운을 천천히 즐기기 좋은 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/포근|몽글|편안|힐링|집/.test(normalized) || themeId === "soft-mood") {
+    return {
+      moodLabel: "포근하고 편안한",
+      moodDescription: "아무것도 서두르지 않아도 괜찮은 시간에 어울리는 한 잔을 찾아봤어요.",
     };
   }
   return {
@@ -1976,26 +2000,30 @@ export default function App() {
     setResult(pool[Math.floor(Math.random() * pool.length)]);
     setScreen("loading");
   };
+  const updatePromptCopy = async (message: string, selectedTheme: MoodTheme) => {
+    try {
+      const response = await fetch("/api/mood-copy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message,
+          theme: themeById(selectedTheme).name,
+          themeDescription: themeById(selectedTheme).description,
+        }),
+      });
+      const body = (await response.json()) as Partial<PromptCopy>;
+      if (response.ok && body.moodLabel && body.moodDescription) {
+        setPromptCopy({ moodLabel: body.moodLabel, moodDescription: body.moodDescription });
+        return;
+      }
+    } catch {
+      // Use the theme-aware local fallback when the copy endpoint is unavailable.
+    }
+    setPromptCopy(fallbackPromptCopy(message, selectedTheme));
+  };
   const agentSearch = async (
     message: string,
   ): Promise<{ status: "success" | "empty"; reason?: string }> => {
-    void (async () => {
-      try {
-        const response = await fetch("/api/mood-copy", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
-        });
-        const body = (await response.json()) as Partial<PromptCopy>;
-        if (response.ok && body.moodLabel && body.moodDescription) {
-          setPromptCopy({ moodLabel: body.moodLabel, moodDescription: body.moodDescription });
-          return;
-        }
-      } catch {
-        // Use the local fallback when the copy endpoint is unavailable.
-      }
-      setPromptCopy(fallbackPromptCopy(message));
-    })();
     const data = await requestAgent(message);
     if (data.fallback) {
       throw new Error("AI 연결이 어려워 기본 추천을 이용해보세요.");
@@ -2023,6 +2051,7 @@ export default function App() {
           theme.legacyMood === (selection?.mood || candidate.mood) &&
           theme.preferredAlcohol.includes(candidate.alcohol),
       ) || moodThemes[0];
+    await updatePromptCopy(message, nextTheme.id);
     setThemeId(nextTheme.id);
     setMood(nextTheme.legacyMood);
     setAvailable(selectedAlcohols);
