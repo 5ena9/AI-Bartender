@@ -116,6 +116,38 @@ const getObjectParticle = (word: string) => {
   if (code < 0xac00 || code > 0xd7a3) return "를";
   return (code - 0xac00) % 28 === 0 ? "를" : "을";
 };
+const getSubjectParticle = (word: string) => {
+  const lastChar = word[word.length - 1];
+  if (!lastChar) return "라는";
+  const code = lastChar.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return "라는";
+  return (code - 0xac00) % 28 === 0 ? "라는" : "이라는";
+};
+const fallbackPromptCopy = (message: string): PromptCopy => {
+  const normalized = message.toLowerCase();
+  if (/썸|데이트|소개팅|설레|로맨틱|연인/.test(normalized)) {
+    return {
+      moodLabel: "달콤하고 설레는",
+      moodDescription: "달콤하고 설레는 시간에 어울리는 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/친구|파티|신나|축하|모임/.test(normalized)) {
+    return {
+      moodLabel: "활기차고 신나는",
+      moodDescription: "함께 웃고 즐기기 좋은 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/비|차분|조용|쉬|피곤|지쳐|퇴근/.test(normalized)) {
+    return {
+      moodLabel: "차분하고 편안한",
+      moodDescription: "느린 저녁에 마음을 내려놓기 좋은 한 잔을 찾아봤어요.",
+    };
+  }
+  return {
+    moodLabel: "지금의 분위기에 잘 어울리는",
+    moodDescription: "지금의 분위기를 더 깊게 만들어줄 한 잔을 찾아봤어요.",
+  };
+};
 const cocktailNames = [
   "시트러스 블룸",
   "벨벳 아워",
@@ -1962,11 +1994,7 @@ export default function App() {
       } catch {
         // Use the local fallback when the copy endpoint is unavailable.
       }
-      const trimmed = message.trim().replace(/[.!?]+$/, "");
-      setPromptCopy({
-        moodLabel: trimmed.length > 18 ? `${trimmed.slice(0, 18)}…` : trimmed,
-        moodDescription: `“${trimmed}”라는 마음에 어울리는 한 잔을 찾아봤어요.`,
-      });
+      setPromptCopy(fallbackPromptCopy(message));
     })();
     const data = await requestAgent(message);
     if (data.fallback) {

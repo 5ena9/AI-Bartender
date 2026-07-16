@@ -34,7 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           {
             role: "system",
             content:
-              '사용자의 한국어 입력을 칵테일 추천 화면의 짧은 감성 문구로 바꾸세요. JSON만 반환하세요. 키는 "moodLabel", "moodDescription"입니다. moodLabel은 2~10자 정도의 자연스러운 형용사 표현(예: 차분하고 느린)으로, moodDescription은 입력의 감정을 과장하지 않는 존댓말 한 문장으로 작성하세요. 주종은 문구에 넣지 마세요.',
+              '사용자의 한국어 입력에서 핵심 분위기와 상황만 파악해 칵테일 추천 화면의 짧은 감성 문구로 바꾸세요. JSON만 반환하세요. 키는 "moodLabel", "moodDescription"입니다. moodLabel은 2~10자 정도의 자연스러운 형용사 표현(예: 달콤하고 설레는, 차분하고 느린)으로 작성하세요. moodDescription은 원문을 복사하거나 인용하지 말고, 입력의 분위기에 잘 어울리는 존댓말 한 문장으로 새롭게 작성하세요. "라는 마음에 어울리는" 같은 기계적인 표현은 사용하지 마세요. 주종은 문구에 넣지 마세요.',
           },
           {
             role: "user",
