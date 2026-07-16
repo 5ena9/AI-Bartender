@@ -69,6 +69,7 @@ type MoodThemeConfig = {
     image: string;
   };
 };
+type PromptCopy = { moodLabel: string; moodDescription: string };
 const spring = { type: "spring", stiffness: 360, damping: 25 } as const;
 
 const moodLabels: Record<Mood, string> = {
@@ -107,6 +108,13 @@ const moodRituals: Record<MoodTheme, string> = {
   "rainy-day": "빗소리 사이로 따뜻한 한 잔을 준비했어요.",
   "sweet-crush": "달콤한 설렘을 한 모금씩 천천히 즐겨보세요.",
   chill: "생각을 잠시 내려놓고 편하게 쉬어가세요.",
+};
+const getObjectParticle = (word: string) => {
+  const lastChar = word[word.length - 1];
+  if (!lastChar) return "를";
+  const code = lastChar.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return "를";
+  return (code - 0xac00) % 28 === 0 ? "를" : "을";
 };
 const cocktailNames = [
   "시트러스 블룸",
@@ -1539,6 +1547,7 @@ function Result({
   onSave,
   onAnother,
   onBack,
+  promptCopy,
 }: {
   cocktail: Cocktail;
   saved: boolean;
@@ -1546,6 +1555,7 @@ function Result({
   onSave: () => void;
   onAnother: () => void;
   onBack: () => void;
+  promptCopy: PromptCopy;
 }) {
   const localized = useMemo(() => localizeCocktail(cocktail), [cocktail]);
   const theme = themeById(themeId);
@@ -1568,7 +1578,7 @@ function Result({
           className="recommendation-intro"
         >
           <span className="eyebrow left">오늘의 무드 · {theme.name}</span>
-          <p className="mood-ritual">{moodRituals[themeId]}</p>
+          <p className="mood-ritual">{promptCopy.moodDescription}</p>
           <div className="result-hero">
             <CocktailArt cocktail={localized} large />
             <div className="result-copy">
@@ -1581,8 +1591,9 @@ function Result({
               <div className="reason">
                 <Sparkles size={15} />
                 <span>
-                  <b>{theme.description}</b> 무드에 어울리는{" "}
-                  <b>{alcoholLabels[localized.alcohol]}</b>을 골랐어요.
+                  <b>{promptCopy.moodLabel}</b> 무드에 어울리는{" "}
+                  <b>{alcoholLabels[localized.alcohol]}</b>
+                  {getObjectParticle(alcoholLabels[localized.alcohol])} 골랐어요.
                 </span>
               </div>
             </div>
@@ -1860,6 +1871,10 @@ export default function App() {
   const [animations, setAnimations] = useState(true);
   const [cloudReady, setCloudReady] = useState(false);
   const [cloudError, setCloudError] = useState<string | null>(null);
+  const [promptCopy, setPromptCopy] = useState<PromptCopy>({
+    moodLabel: "포근하고 편안한",
+    moodDescription: moodRituals["soft-mood"],
+  });
 
   useEffect(() => {
     let active = true;
@@ -1932,6 +1947,27 @@ export default function App() {
   const agentSearch = async (
     message: string,
   ): Promise<{ status: "success" | "empty"; reason?: string }> => {
+    void (async () => {
+      try {
+        const response = await fetch("/api/mood-copy", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+        const body = (await response.json()) as Partial<PromptCopy>;
+        if (response.ok && body.moodLabel && body.moodDescription) {
+          setPromptCopy({ moodLabel: body.moodLabel, moodDescription: body.moodDescription });
+          return;
+        }
+      } catch {
+        // Use the local fallback when the copy endpoint is unavailable.
+      }
+      const trimmed = message.trim().replace(/[.!?]+$/, "");
+      setPromptCopy({
+        moodLabel: trimmed.length > 18 ? `${trimmed.slice(0, 18)}…` : trimmed,
+        moodDescription: `“${trimmed}”라는 마음에 어울리는 한 잔을 찾아봤어요.`,
+      });
+    })();
     const data = await requestAgent(message);
     if (data.fallback) {
       throw new Error("AI 연결이 어려워 기본 추천을 이용해보세요.");
@@ -2024,6 +2060,7 @@ export default function App() {
               onSave={save}
               onAnother={another}
               onBack={() => setScreen("preferences")}
+              promptCopy={promptCopy}
             />
           )}{" "}
           {screen === "explorer" && (
