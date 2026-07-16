@@ -125,6 +125,93 @@ const getSubjectParticle = (word: string) => {
 };
 const fallbackPromptCopy = (message: string, themeId: MoodTheme = "soft-mood"): PromptCopy => {
   const normalized = message.toLowerCase();
+  if (/짝사랑/.test(normalized)) {
+    const isBeginning = /시작|처음|첫/.test(normalized);
+    return {
+      moodLabel: isBeginning ? "새로 시작된 설렘의" : "조심스러운 설렘의",
+      moodDescription: isBeginning
+        ? "짝사랑을 시작한 당신에게 어울리는 한 잔을 찾아봤어요."
+        : "조심스럽게 커져가는 마음에 어울리는 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/고백/.test(normalized)) {
+    return {
+      moodLabel: "용기 있는 설렘의",
+      moodDescription: "마음을 전할 용기가 필요한 순간에 어울리는 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/첫.?데이트|처음.*데이트/.test(normalized)) {
+    return {
+      moodLabel: "처음이라 더 설레는",
+      moodDescription: "처음 마주하는 설렘을 부드럽게 이어갈 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/생일|기념일|결혼|돌잔치/.test(normalized)) {
+    return {
+      moodLabel: "특별한 날을 기념하는",
+      moodDescription: "오래 기억하고 싶은 특별한 날을 위한 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/합격|졸업|취업|승진|성공/.test(normalized)) {
+    return {
+      moodLabel: "노력이 빛나는",
+      moodDescription: "해낸 당신의 순간을 축하하기 좋은 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/이별|실연|헤어졌|상처/.test(normalized)) {
+    return {
+      moodLabel: "마음을 다독이는",
+      moodDescription: "복잡한 마음을 잠시 다독여줄 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/스트레스|화나|짜증|답답/.test(normalized)) {
+    return {
+      moodLabel: "기분을 환기하는",
+      moodDescription: "쌓인 마음을 가볍게 털어낼 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/퇴근|야근|피곤|지쳐/.test(normalized)) {
+    return {
+      moodLabel: "고단한 하루 끝의",
+      moodDescription: "수고한 하루를 부드럽게 마무리할 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/몽글|포근|힐링|집에서|혼술/.test(normalized)) {
+    return {
+      moodLabel: "포근하게 감싸주는",
+      moodDescription: "나만의 편안한 시간을 채워줄 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/비.?오|장마|빗소리/.test(normalized)) {
+    return {
+      moodLabel: "빗소리와 어울리는",
+      moodDescription: "촉촉한 빗소리 곁에서 천천히 즐길 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/여행|휴가|바다|해변|캠핑/.test(normalized)) {
+    return {
+      moodLabel: "여행처럼 가벼운",
+      moodDescription: "일상에서 잠시 벗어난 기분을 더해줄 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/노을|해질녘|산책|주말/.test(normalized)) {
+    return {
+      moodLabel: "노을빛 여유의",
+      moodDescription: "천천히 하루를 즐기고 싶은 순간을 위한 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/새벽|깊은.?밤|고요|생각이 많/.test(normalized)) {
+    return {
+      moodLabel: "깊은 여운의",
+      moodDescription: "조용히 생각에 머물고 싶은 순간을 위한 한 잔을 찾아봤어요.",
+    };
+  }
+  if (/도전|자신감|용기|새로운 시작/.test(normalized)) {
+    return {
+      moodLabel: "용기 있게 나아가는",
+      moodDescription: "새로운 도전을 시작하는 당신에게 어울리는 한 잔을 찾아봤어요.",
+    };
+  }
   if (/썸|데이트|소개팅|설레|로맨틱|연인|달달|달콤/.test(normalized) || themeId === "flirt" || themeId === "sweet-crush") {
     return {
       moodLabel: "달콤하고 설레는",
