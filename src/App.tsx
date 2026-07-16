@@ -98,16 +98,16 @@ const strengthLabels: Record<Strength, string> = {
   Strong: "진하게",
 };
 const moodRituals: Record<MoodTheme, string> = {
-  "golden-hour": "오늘의 여유를 천천히 따라가세요.",
-  flirt: "설레는 순간을 조금 더 길게 머물게 해요.",
-  "soft-mood": "아무것도 서두르지 않아도 괜찮은 시간이에요.",
-  "after-dark": "어두운 바의 깊은 여운을 천천히 즐겨보세요.",
-  bold: "오늘 밤의 중심은 당신입니다.",
-  escape: "잠시 다른 곳에 도착한 듯한 한 잔입니다.",
-  celebration: "좋은 순간은 지금 건배할 때 가장 빛나요.",
-  "rainy-day": "빗소리 사이로 따뜻한 한 잔을 준비했어요.",
-  "sweet-crush": "달콤한 설렘을 한 모금씩 천천히 즐겨보세요.",
-  chill: "생각을 잠시 내려놓고 편하게 쉬어가세요.",
+  "golden-hour": "노을처럼 따뜻한 여유를 천천히 즐겨보세요.",
+  flirt: "설레는 대화가 오래 머무는 저녁이에요.",
+  "soft-mood": "오늘은 마음이 이끄는 속도로 천천히 쉬어가요.",
+  "after-dark": "깊어진 밤, 조용한 여운에 기대어도 좋아요.",
+  bold: "오늘 밤은 망설임 없이 당신답게 즐겨보세요.",
+  escape: "익숙한 하루를 잠시 떠나 새로운 기분을 만나보세요.",
+  celebration: "좋은 순간은 함께 나눌 때 더 반짝여요.",
+  "rainy-day": "빗소리를 배경 삼아 마음을 천천히 달래보세요.",
+  "sweet-crush": "달콤한 설렘이 번지는 순간을 천천히 즐겨보세요.",
+  chill: "복잡한 생각은 잠시 내려놓고 편하게 쉬어가요.",
 };
 const getObjectParticle = (word: string) => {
   const lastChar = word[word.length - 1];
@@ -164,7 +164,7 @@ const fallbackPromptCopy = (message: string, themeId: MoodTheme = "soft-mood"): 
   if (/포근|몽글|편안|힐링|집/.test(normalized) || themeId === "soft-mood") {
     return {
       moodLabel: "포근하고 편안한",
-      moodDescription: "아무것도 서두르지 않아도 괜찮은 시간에 어울리는 한 잔을 찾아봤어요.",
+      moodDescription: "오늘은 마음이 이끄는 속도로 천천히 쉬어가는 한 잔을 찾아봤어요.",
     };
   }
   return {
@@ -1928,8 +1928,8 @@ export default function App() {
   const [cloudReady, setCloudReady] = useState(false);
   const [cloudError, setCloudError] = useState<string | null>(null);
   const [promptCopy, setPromptCopy] = useState<PromptCopy>({
-    moodLabel: "포근하고 편안한",
-    moodDescription: moodRituals["soft-mood"],
+    moodLabel: "따뜻하고 여유로운",
+    moodDescription: moodRituals["golden-hour"],
   });
 
   useEffect(() => {
